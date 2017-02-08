@@ -26,6 +26,12 @@ public class NOTComponent : VirtualComponent {
 		Debug.Log ("Passing through the NOT gate at " + Position+ " Value is " + output);
 	}
 
+	public override void Compute(out bool output)
+	{
+		output = true;
+		Debug.Log ("If this statement appears, then everything is wrong with the world");
+	}
+
 	public override IVector3 MoveElectron()
 	{
 		IVector3 _moveDir = IVector3.zero;

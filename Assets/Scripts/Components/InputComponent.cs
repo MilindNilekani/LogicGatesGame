@@ -24,7 +24,13 @@ public class InputComponent : VirtualComponent {
 	public override void Compute(bool input, out bool output)
 	{
 		output = input;
-		Debug.Log ("Input wire at " + Position + "Value is " + output);
+		//Debug.Log ("Input wire at " + Position + "Value is " + output);
+	}
+
+	public override void Compute(out bool output)
+	{
+		output = true;
+		Debug.Log ("If this statement appears, then everything is wrong with the world");
 	}
 
 	public override IVector3 MoveElectron()
@@ -54,7 +60,7 @@ public class InputComponent : VirtualComponent {
 		}
 		IVector3 electronPos = _position + _moveDir;
 		if (GameHandler.instance._grid.isOnGrid (electronPos.x, electronPos.y, electronPos.z)) {
-			Debug.Log ("Input "+Position + "," + Direction + "=" + electronPos);
+			//Debug.Log ("Input "+Position + "," + Direction + "=" + electronPos);
 			return electronPos;
 		}
 		else {

@@ -19,6 +19,8 @@ public class GameHandler : MonoBehaviour {
 	private List<WireComponent> wiresChecked = new List<WireComponent> ();
 	private List<NOTComponent> not = new List<NOTComponent> ();
 	private List<NOTComponent> notChecked = new List<NOTComponent> ();
+	private List<ORComponent> or=new List<ORComponent>();
+	private List<ORComponent> orChecked = new List<ORComponent> ();
 	private OutputComponent output;
 	private List<IVector3> electronPos = new List<IVector3> ();
 
@@ -79,6 +81,24 @@ public class GameHandler : MonoBehaviour {
 								not.Add (new NOTComponent (new IVector3 (i, j, k), dir));
 								break;
 							}
+						case GridHandler.SpotType.OR_LEFT:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<RotateOnClick> ().Direction;
+								wires.Add (new WireComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
+						case GridHandler.SpotType.OR_RIGHT:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<RotateOnClick> ().Direction;
+								wires.Add (new WireComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
+						case GridHandler.SpotType.OR_CENTRE:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<RotateOnClick> ().Direction;
+								or.Add (new ORComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
 						}
 					}
 				}
@@ -95,6 +115,141 @@ public class GameHandler : MonoBehaviour {
 		MoveElectron ();
 	}
 
+	private void PerformNotOperation(IVector3 pos, int index)
+	{
+		foreach (NOTComponent nc in not) {
+			if (nc.Position == pos) {
+				bool _tempVal;
+				nc.Compute (_logicVals [index], out _tempVal);
+				_logicVals [index] = _tempVal;
+				electronPos [index] = nc.MoveElectron ();
+				Debug.Log ("Electron moved through NOT " + electronPos [index] + " with value =" + _logicVals[index]);
+				GridHandler.SpotType type = _grid.GetComponentType (electronPos [index].x, electronPos [index].y, electronPos [index].z);
+				switch (type) {
+				case GridHandler.SpotType.EMPTY:
+					Debug.LogError ("Disconnected not gate at " + electronPos [index]);
+					break;
+				case GridHandler.SpotType.INPUT:
+					Debug.LogError ("Not cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.NOT:
+					PerformNotOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.WIRE:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OUTPUT:
+					FinalOutput (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_RIGHT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_CENTRE:
+					PerformOrOperation (electronPos [index], index);
+					break;
+				}
+			}
+		}
+	}
+
+	private void PerformWireOperation(IVector3 pos, int index)
+	{
+		foreach (WireComponent wc in wires) {
+			if (wc.Position == pos) {
+				bool _tempVal;
+				wc.Compute (_logicVals [index], out _tempVal);
+				_logicVals [index] = _tempVal;
+				electronPos [index] = wc.MoveElectron ();
+				Debug.Log ("Electron moved through WIRE " + electronPos [index] + " with value =" + _logicVals[index]);
+				GridHandler.SpotType type = _grid.GetComponentType (electronPos [index].x, electronPos [index].y, electronPos [index].z);
+				switch (type) {
+				case GridHandler.SpotType.EMPTY:
+					Debug.LogError ("Disconnected wire at " + electronPos [index]);
+					break;
+				case GridHandler.SpotType.INPUT:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.NOT:
+					PerformNotOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.WIRE:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OUTPUT:
+					FinalOutput (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_RIGHT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_CENTRE:
+					PerformOrOperation (electronPos [index], index);
+					break;
+				}
+			}
+		}
+	}
+
+	private void FinalOutput (IVector3 pos, int index)
+	{
+		Debug.Log ("Final!" + output.MoveElectron ());
+		bool tempVal;
+		output.Compute (_logicVals [index], out tempVal);
+		Debug.Log ("Final val" + tempVal);
+	}
+
+	private void PerformOrOperation (IVector3 pos, int index)
+	{
+		foreach (ORComponent oc in or) {
+			if (oc.Position == pos) {
+				if (oc.Input.Count == 1) {
+					oc.Input.Add (_logicVals [index]);
+					bool _tempVal;
+					oc.Compute (out _tempVal);
+					_logicVals [index] = _tempVal;
+					//_logicVals.RemoveAt (index);
+					electronPos [index] = oc.MoveElectron ();
+					Debug.Log ("Electron moved through OR " + electronPos [index] + " with value =" + _tempVal);
+					GridHandler.SpotType type = _grid.GetComponentType (electronPos [index].x, electronPos [index].y, electronPos [index].z);
+					switch (type) {
+					case GridHandler.SpotType.EMPTY:
+						Debug.LogError ("Disconnected input wire at " + electronPos [index]);
+						break;
+					case GridHandler.SpotType.INPUT:
+						Debug.LogError ("Input wires cannot be connected to each other");
+						break;
+					case GridHandler.SpotType.NOT:
+						PerformNotOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.WIRE:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OUTPUT:
+						FinalOutput (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OR_LEFT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OR_RIGHT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OR_CENTRE:
+						PerformOrOperation (electronPos [index], index);
+						break;
+					}
+
+				} else {
+					oc.Input.Add (_logicVals [index]);
+				}
+			}
+		}
+	}
+
 	private void MoveElectron()
 	{
 		foreach (InputComponent ic in input) {
@@ -103,69 +258,36 @@ public class GameHandler : MonoBehaviour {
 			ic.Compute (_logicVals [i], out _tempVal);
 			_logicVals [i] = _tempVal;
 			electronPos [i] = ic.MoveElectron ();
-			foreach (InputComponent inp in input) {
-				if (electronPos [i] == inp.Position) {
-					Debug.LogError ("Inputs cannot be connected to each other");
-					return;
-				}
+			Debug.Log ("Electron moved through INPUT " + electronPos [i] + " with value =" + _logicVals[i]);
+			GridHandler.SpotType type = _grid.GetComponentType (electronPos [i].x, electronPos [i].y, electronPos [i].z);
+			switch (type) {
+			case GridHandler.SpotType.EMPTY:
+				Debug.LogError ("Disconnected input wire at " + electronPos [i]);
+				break;
+			case GridHandler.SpotType.INPUT:
+				Debug.LogError ("Input wires cannot be connected to each other");
+				break;
+			case GridHandler.SpotType.NOT:
+				PerformNotOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.WIRE:
+				PerformWireOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.OUTPUT:
+				FinalOutput (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.OR_LEFT:
+				PerformWireOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.OR_RIGHT:
+				PerformWireOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.OR_CENTRE:
+				PerformOrOperation (electronPos [i], i);
+				break;
 			}
-		}
-		while(wiresChecked.Count!=wires.Count)
-		{
-			foreach (WireComponent wc in wires) {
-				if (!wiresChecked.Contains (wc)) {
-					if (electronPos.Contains (wc.Position)) {
-						int i = electronPos.IndexOf (wc.Position);
-						bool _tempVal;
-						wc.Compute (_logicVals [i], out _tempVal);
-						_logicVals [i] = _tempVal;
-						electronPos [i] = wc.MoveElectron ();
-						wiresChecked.Add (wc);
-					} else {
-						_wireFlag = true;
-					}
-				}
-			}
-			if (_wireFlag) {
-				Debug.LogError ("Disconnected or backflow of wires");
-				return;
-			}
-		}
-		while(notChecked.Count!=not.Count)
-		{
-			foreach (NOTComponent nc in not) {
-				if (!notChecked.Contains (nc)) {
-					if (electronPos.Contains (nc.Position)) {
-						int i = electronPos.IndexOf (nc.Position);
-						bool _tempVal;
-						nc.Compute (_logicVals [i], out _tempVal);
-						_logicVals [i] = _tempVal;
-						electronPos [i] = nc.MoveElectron ();
-						notChecked.Add (nc);
-					} else {
-						_notFlag = true;
-					}
-				}
-			}
-			if (_notFlag) {
-				Debug.LogError ("Not gate not connected or backflow of gate");
-				return;
-			}
-		}
-		if (output != null) {
-			if (electronPos.Contains (output.Position)) {
-				Debug.Log ("Final!" + output.MoveElectron ());
-				bool tempVal;
-				output.Compute (_logicVals [0], out tempVal);
-				Debug.Log ("Final val" + tempVal);
-			} else {
-				Debug.LogError ("Output gate not connected");
-				return;
-			}
-				
 		}
 	}
-	
 
 	// Update is called once per frame
 	void Update () {

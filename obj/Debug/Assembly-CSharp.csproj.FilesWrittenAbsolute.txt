@@ -16,3 +16,7 @@
 /Users/digitaldreamlabs/Documents/Logic Gates Game/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/digitaldreamlabs/Documents/Logic Gates Game/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/digitaldreamlabs/Documents/Logic Gates Game/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/digitaldreamlabs/Documents/Logic Gates Game/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/digitaldreamlabs/Documents/Logic Gates Game/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/digitaldreamlabs/Documents/Logic Gates Game/obj/Debug/Assembly-CSharp.dll
+/Users/digitaldreamlabs/Documents/Logic Gates Game/obj/Debug/Assembly-CSharp.dll.mdb

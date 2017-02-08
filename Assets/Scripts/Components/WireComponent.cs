@@ -22,7 +22,13 @@ public class WireComponent : VirtualComponent {
 	public override void Compute(bool input, out bool output)
 	{
 		output = input;
-		Debug.Log ("Passing through wire at " + Position + " Value is " + output);
+		//Debug.Log ("Passing through wire at " + Position + " Value is " + output);
+	}
+
+	public override void Compute(out bool output)
+	{
+		output = true;
+		Debug.Log ("If this statement appears, then everything is wrong with the world");
 	}
 
 	public override IVector3 MoveElectron()
@@ -52,7 +58,7 @@ public class WireComponent : VirtualComponent {
 		}
 		IVector3 electronPos = _position + _moveDir;
 		if (GameHandler.instance._grid.isOnGrid (electronPos.x, electronPos.y, electronPos.z)) {
-			Debug.Log ("Wire "+Position + "," + Direction + "=" + electronPos);
+			//Debug.Log ("Wire "+Position + "," + Direction + "=" + electronPos);
 			return electronPos;
 		} else {
 			Debug.Log ("Not on board");

@@ -58,7 +58,9 @@ public class GridHandler : MonoBehaviour {
 	{
 		if (isOnGrid (X, Y, Z)) {
 			_grid [X, Y, Z].type = newType;
-			//Debug.Log ("Type changed to " + newType);
+			//Debug.Log ("Type changed to " + newType + " at " + new IVector3 (X, Y, Z));
+		} else {
+			Debug.LogError ("OMG Off the grid error");
 		}
 	}
 
@@ -69,6 +71,16 @@ public class GridHandler : MonoBehaviour {
 			return _grid [X, Y, Z].Direction;
 		}
 		return ComponentDirection.LEFT;
+	}
+
+	public void SetComponentDirection(ComponentDirection dir, int X, int Y, int Z)
+	{
+		if (isOnGrid (X, Y, Z)) {
+			_grid [X, Y, Z].Direction = dir;
+			//Debug.Log ("Direction changed to " + dir + " at " + new IVector3 (X, Y, Z));
+		} else {
+			Debug.LogError ("OMG Off the grid error");
+		}
 	}
 
 	//Returns type of spot at X,Y,Z
@@ -93,6 +105,46 @@ public class GridHandler : MonoBehaviour {
 	{
 		return  (0<= X && X < ConstantHandler.Instance.GridLength && 0 <= Y && Y < ConstantHandler.Instance.GridWidth && 0 <= Z && Z < ConstantHandler.Instance.GridHeight);
 	}
+
+	public void SetSiblingsForComponent(int X, int Y, int Z, List<GridSpot> sib)
+	{
+		_grid [X, Y, Z].Siblings.Clear ();
+		SetComponentDirection (ComponentDirection.FRONT, sib [0].Position.x, sib [0].Position.y, sib [0].Position.z);
+		SetComponentDirection (ComponentDirection.BACK, sib [1].Position.x, sib [1].Position.y, sib [1].Position.z);
+		SetSpotToType (SpotType.OR_LEFT, sib [0].Position.x, sib [0].Position.y, sib [0].Position.z);
+		SetSpotToType (SpotType.OR_RIGHT, sib [1].Position.x, sib [1].Position.y, sib [1].Position.z);
+		AttachComponent (sib [0].Position.x, sib [0].Position.y, sib [0].Position.z);
+		AttachComponent (sib [1].Position.x, sib [1].Position.y, sib [1].Position.z);
+		foreach (GridSpot s in sib) {
+			if (isOnGrid (s.Position.x, s.Position.y, s.Position.z)) {
+				_grid [X, Y, Z].Siblings.Add (s);
+			}
+			//Debug.Log (_grid [X, Y, Z].Siblings.Count);
+		}
+	}
+
+	public void SetEldest(int X, int Y, int Z, IVector3 eld)
+	{
+		if (isOnGrid (X, Y, Z))
+			_grid [X, Y, Z].Eldest = eld;
+	}
+
+	public IVector3 GetEldest(int X, int Y, int Z)
+	{
+		return _grid [X, Y, Z].Eldest;
+	}
+
+	public List<GridSpot> GetSiblings(int X, int Y, int Z)
+	{
+		if (isOnGrid (X, Y, Z))
+			return _grid [X, Y, Z].Siblings;
+		return null;
+	}
+
+	public GridSpot GetGridSpot(int X, int Y, int Z)
+	{
+		return _grid [X, Y, Z];
+	}
 		
 	//Attaches a component to the gameobject at X,Y,Z
 	public void AttachComponent(int X, int Y, int Z)
@@ -104,8 +156,9 @@ public class GridHandler : MonoBehaviour {
 	//Types of components
 	public enum SpotType
 	{
-		EMPTY, WIRE, INPUT, OUTPUT, NOT, OR
+		EMPTY, WIRE, INPUT, OUTPUT, NOT, OR_LEFT, OR_CENTRE, OR_RIGHT
 	}
+	//OR sides are basically wires while OR centre is basically the OR gate
 
 	public enum ComponentDirection
 	{
@@ -113,7 +166,7 @@ public class GridHandler : MonoBehaviour {
 	}
 
 	//Gridspot struct
-	private struct GridSpot
+	public struct GridSpot
 	{
 		//---------------Private variables-------------------------
 		private ComponentDirection _direction; //Find direction the component is facing or flow
@@ -145,6 +198,18 @@ public class GridHandler : MonoBehaviour {
 			set { _type = value; }
 			get { return _type; }
 		}
+		private List<GridSpot> _siblings;
+		public List<GridSpot> Siblings
+		{
+			set { _siblings=value;	}
+			get { return _siblings; }
+		}
+		private IVector3 _eldest;
+		public IVector3 Eldest
+		{
+			set { _eldest = value; }
+			get { return _eldest; }
+		}
 		//----------------------------------------------------------
 
 		//Constructor
@@ -155,6 +220,8 @@ public class GridHandler : MonoBehaviour {
 			_componentAttached=null;
 			_obj=obj;
 			_type=SpotType.EMPTY;
+			_siblings=new List<GridSpot>();
+			_eldest=pos;
 		}
 
 		//----------------------Methods--------------------------------
@@ -173,8 +240,6 @@ public class GridHandler : MonoBehaviour {
 		//To allow changing of rotation of component
 		private void AddRotationOnClick(GameObject _object)
 		{
-			/*ForwardTouch ft = _object.ForceGetComponent<ForwardTouch> ();
-			ft.Clicked += RotateComponent;*/
 			_object.AddComponent<RotateOnClick> ();
 			_object.GetComponent<RotateOnClick> ().Position = _position;
 			_object.GetComponent<RotateOnClick> ().Direction = _direction;
@@ -218,6 +283,25 @@ public class GridHandler : MonoBehaviour {
 			case SpotType.NOT:
 				_obj.GetComponent<Renderer> ().enabled = false;
 				_componentAttached = Instantiate (PrefabHandler.Instance.NotGate, obj.transform.position, PrefabHandler.Instance.NotGate.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddRotationOnClick (_componentAttached);
+				break;
+			case SpotType.OR_CENTRE:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.ORGateCentre, obj.transform.position, PrefabHandler.Instance.ORGateCentre.transform.rotation) as GameObject;
+				//Debug.Log (_direction);
+				AddHoveringForMod (_componentAttached);
+				AddRotationOnClick (_componentAttached);
+				break;
+			case SpotType.OR_LEFT:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.ORGateLeft, obj.transform.position, PrefabHandler.Instance.ORGateLeft.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddRotationOnClick (_componentAttached);
+				break;
+			case SpotType.OR_RIGHT:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.ORGateRight, obj.transform.position, PrefabHandler.Instance.ORGateRight.transform.rotation) as GameObject;
 				AddHoveringForMod (_componentAttached);
 				AddRotationOnClick (_componentAttached);
 				break;

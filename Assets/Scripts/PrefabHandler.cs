@@ -39,6 +39,24 @@ public class PrefabHandler : Singleton<PrefabHandler> {
 	{
 		get { return _notGate; }
 	}
+	[SerializeField]
+	private GameObject _orGateCentre;
+	public GameObject ORGateCentre
+	{
+		get { return _orGateCentre; }
+	}
+	[SerializeField]
+	private GameObject _orGateLeft;
+	public GameObject ORGateLeft
+	{
+		get { return _orGateLeft; }
+	}
+	[SerializeField]
+	private GameObject _orGateRight;
+	public GameObject ORGateRight
+	{
+		get { return _orGateRight; }
+	}
 	//------------------------------------------------
 	[SerializeField]
 	private GameObject _canvas;

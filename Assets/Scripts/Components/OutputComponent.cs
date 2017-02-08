@@ -25,6 +25,12 @@ public class OutputComponent : VirtualComponent {
 		Debug.Log ("Output! at " + Position);
 	}
 
+	public override void Compute(out bool output)
+	{
+		output = true;
+		Debug.Log ("If this statement appears, then everything is wrong with the world");
+	}
+
 	public override IVector3 MoveElectron()
 	{
 		IVector3 _moveDir = IVector3.zero;
