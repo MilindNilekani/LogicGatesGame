@@ -11,6 +11,7 @@ public class GameHandler : MonoBehaviour {
 	//Logic calculation related attributes
 	public bool[] _logicInput = new bool[5];
 	private List<bool> _logicVals = new List<bool> ();
+	private bool _wireFlag, _notFlag;
 
 	//Lists
 	private List<InputComponent> input=new List<InputComponent>();
@@ -83,6 +84,14 @@ public class GameHandler : MonoBehaviour {
 				}
 			}
 		}
+		if (input.Count < 1) {
+			Debug.LogError ("No inputs detected");
+			return;
+		}
+		if (output == null) {
+			Debug.LogError ("No output detected");
+			return;
+		}
 		MoveElectron ();
 	}
 
@@ -94,10 +103,16 @@ public class GameHandler : MonoBehaviour {
 			ic.Compute (_logicVals [i], out _tempVal);
 			_logicVals [i] = _tempVal;
 			electronPos [i] = ic.MoveElectron ();
+			foreach (InputComponent inp in input) {
+				if (electronPos [i] == inp.Position) {
+					Debug.LogError ("Inputs cannot be connected to each other");
+					return;
+				}
+			}
 		}
 		while(wiresChecked.Count!=wires.Count)
 		{
-		foreach (WireComponent wc in wires) {
+			foreach (WireComponent wc in wires) {
 				if (!wiresChecked.Contains (wc)) {
 					if (electronPos.Contains (wc.Position)) {
 						int i = electronPos.IndexOf (wc.Position);
@@ -106,8 +121,14 @@ public class GameHandler : MonoBehaviour {
 						_logicVals [i] = _tempVal;
 						electronPos [i] = wc.MoveElectron ();
 						wiresChecked.Add (wc);
+					} else {
+						_wireFlag = true;
 					}
 				}
+			}
+			if (_wireFlag) {
+				Debug.LogError ("Disconnected or backflow of wires");
+				return;
 			}
 		}
 		while(notChecked.Count!=not.Count)
@@ -121,15 +142,27 @@ public class GameHandler : MonoBehaviour {
 						_logicVals [i] = _tempVal;
 						electronPos [i] = nc.MoveElectron ();
 						notChecked.Add (nc);
+					} else {
+						_notFlag = true;
 					}
 				}
 			}
+			if (_notFlag) {
+				Debug.LogError ("Not gate not connected or backflow of gate");
+				return;
+			}
 		}
 		if (output != null) {
-			Debug.Log ("Final!" + output.MoveElectron ());
-			bool tempVal;
-			output.Compute(_logicVals[0], out tempVal);
-			Debug.Log ("Final val" + tempVal);
+			if (electronPos.Contains (output.Position)) {
+				Debug.Log ("Final!" + output.MoveElectron ());
+				bool tempVal;
+				output.Compute (_logicVals [0], out tempVal);
+				Debug.Log ("Final val" + tempVal);
+			} else {
+				Debug.LogError ("Output gate not connected");
+				return;
+			}
+				
 		}
 	}
 	

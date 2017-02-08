@@ -1,14 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameHandler.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GridHandler.cs">
     <Files>
       <File FileName="Assets/Scripts/CameraController.cs" Line="48" Column="3" />
       <File FileName="Assets/Scripts/ConstantHandler.cs" Line="63" Column="42" />
-      <File FileName="Assets/Scripts/GameHandler.cs" Line="38" Column="1" />
-      <File FileName="Assets/Scripts/PrefabHandler.cs" Line="25" Column="18" />
-      <File FileName="Assets/Scripts/GridHandler.cs" Line="14" Column="17" />
-      <File FileName="Assets/Scripts/UI/ComponentAddUI.cs" Line="33" Column="13" />
-      <File FileName="Assets/Scripts/Components/GridListenerHover.cs" Line="44" Column="1" />
+      <File FileName="Assets/Scripts/GameHandler.cs" Line="139" Column="3" />
+      <File FileName="Assets/Scripts/PrefabHandler.cs" Line="40" Column="27" />
+      <File FileName="Assets/Scripts/GridHandler.cs" Line="173" Column="47" />
+      <File FileName="Assets/Scripts/UI/ComponentAddUI.cs" Line="22" Column="56" />
+      <File FileName="Assets/Scripts/RotateOnClick.cs" Line="15" Column="90" />
+      <File FileName="Assets/Scripts/Components/VirtualComponent.cs" Line="5" Column="58" />
+      <File FileName="Assets/Scripts/Components/WireComponent.cs" Line="25" Column="54" />
+      <File FileName="Assets/Scripts/Components/OutputComponent.cs" Line="22" Column="2" />
+      <File FileName="Assets/Scripts/Components/InputComponent.cs" Line="27" Column="64" />
+      <File FileName="Assets/Scripts/Components/NOTComponent.cs" Line="26" Column="82" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
