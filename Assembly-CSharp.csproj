@@ -46,21 +46,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\ComponentMod\RotateAndPositionOnClick.cs" />
+     <Compile Include="Assets\Scripts\ComponentMod\RotAndSiblingPosChange.cs" />
      <Compile Include="Assets\Scripts\ComponentMod\RotateOnClick.cs" />
+     <Compile Include="Assets\Scripts\ComponentMod\SiblingsDir.cs" />
      <Compile Include="Assets\Scripts\Components\InputComponent.cs" />
      <Compile Include="Assets\Scripts\Components\NOTComponent.cs" />
      <Compile Include="Assets\Scripts\Components\ORComponent.cs" />
      <Compile Include="Assets\Scripts\Components\OutputComponent.cs" />
      <Compile Include="Assets\Scripts\Components\VirtualComponent.cs" />
      <Compile Include="Assets\Scripts\Components\WireComponent.cs" />
-     <Compile Include="Assets\Scripts\ConstantHandler.cs" />
-     <Compile Include="Assets\Scripts\GameHandler.cs" />
-     <Compile Include="Assets\Scripts\GridHandler.cs" />
-     <Compile Include="Assets\Scripts\GridListenerHover.cs" />
-     <Compile Include="Assets\Scripts\PrefabHandler.cs" />
+     <Compile Include="Assets\Scripts\ConstantPrefab\ConstantHandler.cs" />
+     <Compile Include="Assets\Scripts\ConstantPrefab\PrefabHandler.cs" />
+     <Compile Include="Assets\Scripts\Main\CameraController.cs" />
+     <Compile Include="Assets\Scripts\Main\GameHandler.cs" />
+     <Compile Include="Assets\Scripts\Main\GridHandler.cs" />
      <Compile Include="Assets\Scripts\UI\ComponentAddUI.cs" />
+     <Compile Include="Assets\Scripts\UI\GridListenerHover.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

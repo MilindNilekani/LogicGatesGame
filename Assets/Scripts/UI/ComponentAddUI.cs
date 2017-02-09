@@ -40,7 +40,7 @@ public class ComponentAddUI : MonoBehaviour, IBeginDragHandler,IDragHandler,IEnd
 				eld = _grid.GetGridSpot (pos.x, pos.y, pos.z);
 				_grid.SetSpotToType (_typeOfItem, pos.x, pos.y, pos.z);
 				_grid.AttachComponent (pos.x, pos.y, pos.z);
-				_grid.SetSiblingsForComponent (pos.x, pos.y, pos.z, _sib);
+				_grid.SetSiblingsForComponent (pos.x, pos.y, pos.z, _sib, GridHandler.ComponentDirection.FRONT,GridHandler.ComponentDirection.BACK);
 				_grid.SetEldest (sib1.Position.x, sib1.Position.y, sib1.Position.z, eld.Position);
 				_grid.SetEldest (sib2.Position.x, sib2.Position.y, sib2.Position.z, eld.Position);
 
