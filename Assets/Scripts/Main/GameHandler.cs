@@ -10,16 +10,16 @@ public class GameHandler : MonoBehaviour {
 
 	//Logic calculation related attributes
 	public bool[] _logicInput = new bool[5];
-	private List<bool> _logicVals = new List<bool> ();
+	private List<bool> _logicVals;
 
 	//Lists
-	private List<InputComponent> input=new List<InputComponent>();
-	private List<WireComponent> wires=new List<WireComponent>();
-	private List<NOTComponent> not = new List<NOTComponent> ();
-	private List<ORComponent> or=new List<ORComponent>();
-	private List<SplitterComponent> splitter = new List<SplitterComponent> ();
+	private List<InputComponent> input;
+	private List<WireComponent> wires;
+	private List<NOTComponent> not;
+	private List<ORComponent> or;
+	private List<SplitterComponent> splitter;
 	private OutputComponent output;
-	private List<IVector3> electronPos = new List<IVector3> ();
+	private List<IVector3> electronPos;
 
 	//Singleton for GameHandler
 	public static GameHandler instance = null;
@@ -43,6 +43,14 @@ public class GameHandler : MonoBehaviour {
 
 	private void FindAllComponents()
 	{
+		input = new List<InputComponent> ();
+		wires = new List<WireComponent> ();
+		not = new List<NOTComponent> ();
+		or = new List<ORComponent> ();
+		splitter = new List<SplitterComponent> ();
+		output = null;
+		electronPos = new List<IVector3> ();
+		_logicVals = new List<bool> ();
 		int val = 0;
 		for (int i = 0; i < ConstantHandler.Instance.GridLength; i++) {
 			for (int j = 0; j < ConstantHandler.Instance.GridWidth; j++) {
