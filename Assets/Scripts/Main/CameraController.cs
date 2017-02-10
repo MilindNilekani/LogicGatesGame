@@ -12,67 +12,71 @@ public class CameraController : MonoBehaviour {
 	// Update is called once per frame
 	void Update()
 	{
-		/*float deltaX = Input.GetAxis("Mouse X") * ConstantHandler.Instance.MouseSensitivityX;
-		float deltaY = Input.GetAxis("Mouse Y") * ConstantHandler.Instance.MouseSensitivityY;
-		if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
+		RotateCamera ();
+		MoveCamera ();
+	}
+
+	private void RotateCamera()
+	{
+		Vector3 origin = Camera.main.transform.eulerAngles;
+		Vector3 destination = origin;
+
+		//detect rotation amount if ALT is being held and the Right mouse button is down
+		if (Input.GetMouseButton(1))
 		{
-			Strafe(deltaX);
-			ChangeHeight(deltaY);
+			destination.x -= Input.GetAxis("Mouse Y") * ConstantHandler.Instance.MouseSensitivityX;
+			destination.y += Input.GetAxis("Mouse X") * ConstantHandler.Instance.MouseSensitivityY;
 		}
-		else
+
+		//if a change in position is detected perform the necessary update
+		if (destination != origin)
 		{
-			if (Input.GetMouseButton(0))
-			{
-				MoveForwards(deltaY);
-				ChangeHeading(deltaX);
-			}
-			else if (Input.GetMouseButton(1))
-			{
-				ChangeHeading(deltaX);
-				ChangePitch(-deltaY);
-			}
-		}*/
+			Camera.main.transform.eulerAngles = Vector3.MoveTowards(origin, destination, Time.deltaTime * ConstantHandler.Instance.MouseSensitivityX);
+		}
 	}
 
-	private void MoveForwards(float aVal)
+	private void MoveCamera()
 	{
-		Vector3 fwd = transform.forward;
-		fwd.y = 0;
-		fwd.Normalize();
-		transform.position += aVal * fwd;
-	}
+		float xpos = Input.mousePosition.x;
+		float ypos = Input.mousePosition.y;
+		Vector3 movement = new Vector3(0, 0, 0);
 
-	private void Strafe(float aVal)
-	{
-		transform.position += aVal * transform.right;
-	}
+		//Move the GameObject
+		if (Input.GetKey("a"))
+		{
+			movement.x -= ConstantHandler.Instance.MoveSpeed;
+		}
+		if (Input.GetKey("s"))
+		{
+			movement.z -= ConstantHandler.Instance.MoveSpeed;
 
-	private void ChangeHeight(float aVal)
-	{
-		transform.position += aVal * Vector3.up;
-	}
+		}
+		if (Input.GetKey("d"))
+		{
+			movement.x += ConstantHandler.Instance.MoveSpeed;
+		}
+		if (Input.GetKey("w"))
+		{
 
-	private void ChangeHeading(float aVal)
-	{
-		mHdg += aVal;
-		WrapAngle(ref mHdg);
-		transform.localEulerAngles = new Vector3(mPitch, mHdg, 0);
-		Camera.main.transform.rotation = Quaternion.Euler (mPitch, mHdg, 0);
-	}
+			movement.z += ConstantHandler.Instance.MoveSpeed;
+		}
 
-	private void ChangePitch(float aVal)
-	{
-		mPitch += aVal;
-		WrapAngle(ref mPitch);
-		transform.localEulerAngles = new Vector3(mPitch, mHdg, 0);
-		Camera.main.transform.rotation = Quaternion.Euler (mPitch, mHdg, 0);
-	}
+		movement = Camera.main.transform.TransformDirection(movement);
+		movement.y = 0;
+		//away from ground movement
+		movement.y -= ConstantHandler.Instance.MoveSpeed * Input.GetAxis("Mouse ScrollWheel");
 
-	private static void WrapAngle(ref float angle)
-	{
-		if (angle < -360F)
-			angle += 360F;
-		if (angle > 360F)
-			angle -= 360F;
+		//calculate desired camera position based on received input
+		Vector3 origin = Camera.main.transform.position;
+		Vector3 destination = origin;
+		destination.x += movement.x;
+		destination.y += movement.y;
+		destination.z += movement.z;
+
+		//if a change in position is detected perform the necessary update
+		if (destination != origin)
+		{
+			Camera.main.transform.position = Vector3.MoveTowards(origin, destination, Time.deltaTime * ConstantHandler.Instance.MoveSpeed);
+		}
 	}
 }

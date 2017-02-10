@@ -57,6 +57,12 @@ public class PrefabHandler : Singleton<PrefabHandler> {
 	{
 		get { return _orGateRight; }
 	}
+	[SerializeField]
+	private GameObject _splitterPrefab;
+	public GameObject Splitter
+	{
+		get { return _splitterPrefab; }
+	}
 	//------------------------------------------------
 	[SerializeField]
 	private GameObject _canvas;

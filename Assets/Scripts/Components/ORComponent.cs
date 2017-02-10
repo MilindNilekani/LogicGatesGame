@@ -38,6 +38,12 @@ public class ORComponent : VirtualComponent {
 		//Debug.Log ("Passing through the OR gate at " + Position+ " Value is " + output);
 	}
 
+	public override IVector3 MoveSecElectron()
+	{
+		Debug.Log ("Never");
+		return IVector3.zero;
+	}
+
 	public override IVector3 MoveElectron()
 	{
 		IVector3 _moveDir = IVector3.zero;

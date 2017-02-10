@@ -9,16 +9,22 @@ public class ConstantHandler : Singleton<ConstantHandler> {
 	}
 	//-------------------Camera Controller-------------------
 	[SerializeField]
-	private float _mouseSensitivityX=8F;
+	private float _mouseSensitivityX=20F;
 	public float MouseSensitivityX
 	{
 		get { return _mouseSensitivityX; }
 	}
 	[SerializeField]
-	private float _mouseSensitivityY=8F;
+	private float _mouseSensitivityY=20F;
 	public float MouseSensitivityY
 	{
 		get { return _mouseSensitivityY; }
+	}
+	[SerializeField]
+	private float _moveSpeed=8F;
+	public float MoveSpeed
+	{
+		get { return _moveSpeed; }
 	}
 	//--------------------------------------------------------
 

@@ -11,16 +11,13 @@ public class GameHandler : MonoBehaviour {
 	//Logic calculation related attributes
 	public bool[] _logicInput = new bool[5];
 	private List<bool> _logicVals = new List<bool> ();
-	private bool _wireFlag, _notFlag;
 
 	//Lists
 	private List<InputComponent> input=new List<InputComponent>();
 	private List<WireComponent> wires=new List<WireComponent>();
-	private List<WireComponent> wiresChecked = new List<WireComponent> ();
 	private List<NOTComponent> not = new List<NOTComponent> ();
-	private List<NOTComponent> notChecked = new List<NOTComponent> ();
 	private List<ORComponent> or=new List<ORComponent>();
-	private List<ORComponent> orChecked = new List<ORComponent> ();
+	private List<SplitterComponent> splitter = new List<SplitterComponent> ();
 	private OutputComponent output;
 	private List<IVector3> electronPos = new List<IVector3> ();
 
@@ -97,6 +94,13 @@ public class GameHandler : MonoBehaviour {
 							{
 								GridHandler.ComponentDirection dir = spot.GetComponent<RotAndSiblingPosChange>().Direction;
 								or.Add (new ORComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
+						case GridHandler.SpotType.SPLITTER:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<SplitterRotateOnClick> ().Direction;
+								GridHandler.ComponentDirection sec = spot.GetComponent<SplitterRotateOnClick> ().SecondaryDirection;
+								splitter.Add (new SplitterComponent (new IVector3 (i, j, k), dir,sec));
 								break;
 							}
 						}
@@ -189,6 +193,88 @@ public class GameHandler : MonoBehaviour {
 					break;
 				case GridHandler.SpotType.OR_CENTRE:
 					PerformOrOperation (electronPos [index], index);
+					break;
+				}
+			}
+		}
+	}
+
+	private void PerformSplitOperation(IVector3 pos, int index)
+	{
+		int newIndex;
+		foreach (SplitterComponent sc in splitter) {
+			if (sc.Position == pos) {
+				bool newValAdded = _logicVals [index];
+				_logicVals.Add (newValAdded);
+				newIndex = _logicVals.Count-1;
+				bool _tempVal1, _tempVal2;
+				sc.Compute (_logicVals [index], out _tempVal1);
+				sc.Compute (_logicVals [newIndex], out _tempVal2);
+				_logicVals [index] = _tempVal1;
+				_logicVals [newIndex] = _tempVal2;
+
+				IVector3 newPos = sc.MoveSecElectron ();
+				electronPos.Add (newPos);
+				electronPos [index] = sc.MoveElectron ();
+				Debug.Log ("Electron moved through SPLITTER " + electronPos [index] + " with value =" + _logicVals[index] +" and " + electronPos [newIndex] + " with value =" + _logicVals[newIndex]);
+				GridHandler.SpotType type1 = _grid.GetComponentType (electronPos [index].x, electronPos [index].y, electronPos [index].z);
+				GridHandler.SpotType type2 = _grid.GetComponentType (electronPos [newIndex].x, electronPos [newIndex].y, electronPos [newIndex].z);
+				switch (type1) {
+				case GridHandler.SpotType.EMPTY:
+					Debug.LogError ("Disconnected wire at " + electronPos [index]);
+					break;
+				case GridHandler.SpotType.INPUT:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.NOT:
+					PerformNotOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.WIRE:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OUTPUT:
+					FinalOutput (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_RIGHT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.OR_CENTRE:
+					PerformOrOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.SPLITTER:
+					PerformSplitOperation (electronPos [index], index);
+					break;
+				}
+				switch (type2) {
+				case GridHandler.SpotType.EMPTY:
+					Debug.LogError ("Disconnected wire at " + electronPos [newIndex]);
+					break;
+				case GridHandler.SpotType.INPUT:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.NOT:
+					PerformNotOperation (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.WIRE:
+					PerformWireOperation (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.OUTPUT:
+					FinalOutput (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.OR_LEFT:
+					PerformWireOperation (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.OR_RIGHT:
+					PerformWireOperation (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.OR_CENTRE:
+					PerformOrOperation (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.SPLITTER:
+					PerformSplitOperation (electronPos [newIndex], newIndex);
 					break;
 				}
 			}
@@ -288,6 +374,9 @@ public class GameHandler : MonoBehaviour {
 				break;
 			case GridHandler.SpotType.OR_CENTRE:
 				PerformOrOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.SPLITTER:
+				PerformSplitOperation (electronPos [i], i);
 				break;
 			}
 		}

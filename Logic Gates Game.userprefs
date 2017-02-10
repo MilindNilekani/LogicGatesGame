@@ -1,22 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UI/ComponentAddUI.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ComponentMod/RotAndSiblingPosChange.cs">
     <Files>
-      <File FileName="Assets/Scripts/CameraController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/ConstantHandler.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/GameHandler.cs" Line="297" Column="1" />
-      <File FileName="Assets/Scripts/PrefabHandler.cs" Line="58" Column="28" />
-      <File FileName="Assets/Scripts/GridHandler.cs" Line="224" Column="16" />
-      <File FileName="Assets/Scripts/UI/ComponentAddUI.cs" Line="45" Column="85" />
-      <File FileName="Assets/Scripts/Components/VirtualComponent.cs" Line="6" Column="31" />
+      <File FileName="Assets/Scripts/UI/ComponentAddUI.cs" Line="43" Column="135" />
+      <File FileName="Assets/Scripts/Components/VirtualComponent.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Components/WireComponent.cs" Line="25" Column="5" />
       <File FileName="Assets/Scripts/Components/OutputComponent.cs" Line="34" Column="2" />
       <File FileName="Assets/Scripts/Components/InputComponent.cs" Line="27" Column="5" />
       <File FileName="Assets/Scripts/Components/NOTComponent.cs" Line="31" Column="17" />
       <File FileName="Assets/Scripts/Components/ORComponent.cs" Line="37" Column="36" />
-      <File FileName="Assets/Scripts/GridListenerHover.cs" Line="32" Column="28" />
-      <File FileName="Assets/Scripts/ComponentMod/RotateOnClick.cs" Line="60" Column="5" />
-      <File FileName="Assets/Scripts/ComponentMod/RotateAndPositionOnClick.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/ComponentMod/RotateOnClick.cs" Line="38" Column="52" />
+      <File FileName="Assets/Scripts/Main/GameHandler.cs" Line="92" Column="75" />
+      <File FileName="Assets/Scripts/Main/GridHandler.cs" Line="145" Column="49" />
+      <File FileName="Assets/Scripts/ComponentMod/RotAndSiblingPosChange.cs" Line="248" Column="81" />
+      <File FileName="Assets/Scripts/ComponentMod/SiblingsDir.cs" Line="12" Column="29" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

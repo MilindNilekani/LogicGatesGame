@@ -33,6 +33,12 @@ public class InputComponent : VirtualComponent {
 		Debug.Log ("If this statement appears, then everything is wrong with the world");
 	}
 
+	public override IVector3 MoveSecElectron()
+	{
+		Debug.Log ("Never");
+		return IVector3.zero;
+	}
+
 	public override IVector3 MoveElectron()
 	{
 		IVector3 _moveDir = IVector3.zero;

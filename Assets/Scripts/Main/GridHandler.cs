@@ -157,7 +157,7 @@ public class GridHandler : MonoBehaviour {
 	//Types of components
 	public enum SpotType
 	{
-		EMPTY, WIRE, INPUT, OUTPUT, NOT, OR_LEFT, OR_CENTRE, OR_RIGHT
+		EMPTY, WIRE, INPUT, OUTPUT, NOT, OR_LEFT, OR_CENTRE, OR_RIGHT, SPLITTER
 	}
 	//OR sides are basically wires while OR centre is basically the OR gate
 
@@ -211,6 +211,11 @@ public class GridHandler : MonoBehaviour {
 			set { _eldest = value; }
 			get { return _eldest; }
 		}
+		private ComponentDirection _secondaryDirection;
+		public ComponentDirection SecondaryDirection
+		{
+			get { return _secondaryDirection; }
+		}
 		//----------------------------------------------------------
 
 		//Constructor
@@ -223,6 +228,7 @@ public class GridHandler : MonoBehaviour {
 			_type=SpotType.EMPTY;
 			_siblings=new List<GridSpot>();
 			_eldest=pos;
+			_secondaryDirection=ComponentDirection.FRONT;
 		}
 
 		//----------------------Methods--------------------------------
@@ -262,6 +268,14 @@ public class GridHandler : MonoBehaviour {
 			_object.GetComponent<RotAndSiblingPosChange> ().Position = _position;
 			_object.GetComponent<RotAndSiblingPosChange> ().Direction = _direction;
 			_object.GetComponent<RotAndSiblingPosChange> ().Siblings = _siblings;
+		}
+
+		private void AddSplitterRotationOnClick(GameObject _object)
+		{
+			_object.AddComponent<SplitterRotateOnClick> ();
+			_object.GetComponent<SplitterRotateOnClick> ().Position = _position;
+			_object.GetComponent<SplitterRotateOnClick> ().Direction = _direction;
+			_object.GetComponent<SplitterRotateOnClick> ().SecondaryDirection = _secondaryDirection;
 		}
 
 		private void AddSiblingOnClick(GameObject _object)
@@ -319,6 +333,12 @@ public class GridHandler : MonoBehaviour {
 				_componentAttached = Instantiate (PrefabHandler.Instance.ORGateRight, obj.transform.position, PrefabHandler.Instance.ORGateRight.transform.rotation) as GameObject;
 				AddHoveringForMod (_componentAttached);
 				AddSiblingOnClick (_componentAttached);
+				break;
+			case SpotType.SPLITTER:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.Splitter, obj.transform.position, PrefabHandler.Instance.Splitter.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddSplitterRotationOnClick (_componentAttached);
 				break;
 			}
 		}

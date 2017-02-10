@@ -49,10 +49,12 @@
      <Compile Include="Assets\Scripts\ComponentMod\RotAndSiblingPosChange.cs" />
      <Compile Include="Assets\Scripts\ComponentMod\RotateOnClick.cs" />
      <Compile Include="Assets\Scripts\ComponentMod\SiblingsDir.cs" />
+     <Compile Include="Assets\Scripts\ComponentMod\SplitterRotateOnClick.cs" />
      <Compile Include="Assets\Scripts\Components\InputComponent.cs" />
      <Compile Include="Assets\Scripts\Components\NOTComponent.cs" />
      <Compile Include="Assets\Scripts\Components\ORComponent.cs" />
      <Compile Include="Assets\Scripts\Components\OutputComponent.cs" />
+     <Compile Include="Assets\Scripts\Components\SplitterComponent.cs" />
      <Compile Include="Assets\Scripts\Components\VirtualComponent.cs" />
      <Compile Include="Assets\Scripts\Components\WireComponent.cs" />
      <Compile Include="Assets\Scripts\ConstantPrefab\ConstantHandler.cs" />
