@@ -109,7 +109,7 @@ public class GridHandler : MonoBehaviour {
 	public void SetSiblingsForComponent(int X, int Y, int Z, List<GridSpot> sib, ComponentDirection dir1, ComponentDirection dir2)
 	{
 		_grid [X, Y, Z].Siblings.Clear ();
-		Debug.Log (sib.Count);
+		//Debug.Log (sib.Count);
 		SetComponentDirection (dir1, sib [0].Position.x, sib [0].Position.y, sib [0].Position.z);
 		SetComponentDirection (dir2, sib [1].Position.x, sib [1].Position.y, sib [1].Position.z);
 		SetSpotToType (SpotType.OR_LEFT, sib [0].Position.x, sib [0].Position.y, sib [0].Position.z);
@@ -157,7 +157,7 @@ public class GridHandler : MonoBehaviour {
 	//Types of components
 	public enum SpotType
 	{
-		EMPTY, WIRE, INPUT, OUTPUT, NOT, OR_LEFT, OR_CENTRE, OR_RIGHT, SPLITTER
+		EMPTY, WIRE, INPUT_A, INPUT_B, INPUT_C, OUTPUT, NOT, OR_LEFT, OR_CENTRE, OR_RIGHT, SPLITTER, AND_CENTRE, AND_LEFT, AND_RIGHT
 	}
 	//OR sides are basically wires while OR centre is basically the OR gate
 
@@ -298,7 +298,19 @@ public class GridHandler : MonoBehaviour {
 				AddHoveringForMod (_componentAttached);
 				AddRotationOnClick (_componentAttached);
 				break;
-			case SpotType.INPUT:
+			case SpotType.INPUT_A:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.Input, obj.transform.position, PrefabHandler.Instance.Input.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddRotationOnClick (_componentAttached);
+				break;
+			case SpotType.INPUT_B:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.Input, obj.transform.position, PrefabHandler.Instance.Input.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddRotationOnClick (_componentAttached);
+				break;
+			case SpotType.INPUT_C:
 				_obj.GetComponent<Renderer> ().enabled = false;
 				_componentAttached = Instantiate (PrefabHandler.Instance.Input, obj.transform.position, PrefabHandler.Instance.Input.transform.rotation) as GameObject;
 				AddHoveringForMod (_componentAttached);
@@ -324,13 +336,31 @@ public class GridHandler : MonoBehaviour {
 				break;
 			case SpotType.OR_LEFT:
 				_obj.GetComponent<Renderer> ().enabled = false;
-				_componentAttached = Instantiate (PrefabHandler.Instance.ORGateLeft, obj.transform.position, PrefabHandler.Instance.ORGateLeft.transform.rotation) as GameObject;
+				_componentAttached = Instantiate (PrefabHandler.Instance.GateLeft, obj.transform.position, PrefabHandler.Instance.GateLeft.transform.rotation) as GameObject;
 				AddHoveringForMod (_componentAttached);
 				AddSiblingOnClick (_componentAttached);
 				break;
 			case SpotType.OR_RIGHT:
 				_obj.GetComponent<Renderer> ().enabled = false;
-				_componentAttached = Instantiate (PrefabHandler.Instance.ORGateRight, obj.transform.position, PrefabHandler.Instance.ORGateRight.transform.rotation) as GameObject;
+				_componentAttached = Instantiate (PrefabHandler.Instance.GateRight, obj.transform.position, PrefabHandler.Instance.GateRight.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddSiblingOnClick (_componentAttached);
+				break;
+			case SpotType.AND_CENTRE:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.ANDGateCentre, obj.transform.position, PrefabHandler.Instance.ANDGateCentre.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddRotationAndSiblingPosChangeOnClick (_componentAttached);
+				break;
+			case SpotType.AND_LEFT:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.GateLeft, obj.transform.position, PrefabHandler.Instance.GateLeft.transform.rotation) as GameObject;
+				AddHoveringForMod (_componentAttached);
+				AddSiblingOnClick (_componentAttached);
+				break;
+			case SpotType.AND_RIGHT:
+				_obj.GetComponent<Renderer> ().enabled = false;
+				_componentAttached = Instantiate (PrefabHandler.Instance.GateRight, obj.transform.position, PrefabHandler.Instance.GateRight.transform.rotation) as GameObject;
 				AddHoveringForMod (_componentAttached);
 				AddSiblingOnClick (_componentAttached);
 				break;

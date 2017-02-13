@@ -17,6 +17,7 @@ public class GameHandler : MonoBehaviour {
 	private List<WireComponent> wires;
 	private List<NOTComponent> not;
 	private List<ORComponent> or;
+	private List<ANDComponent> and;
 	private List<SplitterComponent> splitter;
 	private OutputComponent output;
 	private List<IVector3> electronPos;
@@ -48,6 +49,7 @@ public class GameHandler : MonoBehaviour {
 		not = new List<NOTComponent> ();
 		or = new List<ORComponent> ();
 		splitter = new List<SplitterComponent> ();
+		and = new List<ANDComponent> ();
 		output = null;
 		electronPos = new List<IVector3> ();
 		_logicVals = new List<bool> ();
@@ -59,12 +61,27 @@ public class GameHandler : MonoBehaviour {
 					if (_grid.GetComponentObject (new IVector3 (i, j, k), out spot)) {
 						GridHandler.SpotType _type = _grid.GetComponentType (i, j, k);
 						switch (_type) {
-						case GridHandler.SpotType.INPUT:
+						case GridHandler.SpotType.INPUT_A:
 							{
 								GridHandler.ComponentDirection dir = spot.GetComponent<RotateOnClick> ().Direction;
-								input.Add (new InputComponent (new IVector3 (i, j, k), dir, _logicInput[val]));
-								_logicVals.Add (_logicInput [val]);
-								val++;
+								input.Add (new InputComponent (new IVector3 (i, j, k), dir, _logicInput[0]));
+								_logicVals.Add (_logicInput [0]);
+								electronPos.Add (new IVector3(i,j,k));
+								break;
+							}
+						case GridHandler.SpotType.INPUT_B:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<RotateOnClick> ().Direction;
+								input.Add (new InputComponent (new IVector3 (i, j, k), dir, _logicInput[1]));
+								_logicVals.Add (_logicInput [1]);
+								electronPos.Add (new IVector3(i,j,k));
+								break;
+							}
+						case GridHandler.SpotType.INPUT_C:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<RotateOnClick> ().Direction;
+								input.Add (new InputComponent (new IVector3 (i, j, k), dir, _logicInput[2]));
+								_logicVals.Add (_logicInput [2]);
 								electronPos.Add (new IVector3(i,j,k));
 								break;
 							}
@@ -111,6 +128,24 @@ public class GameHandler : MonoBehaviour {
 								splitter.Add (new SplitterComponent (new IVector3 (i, j, k), dir,sec));
 								break;
 							}
+						case GridHandler.SpotType.AND_CENTRE:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<RotAndSiblingPosChange>().Direction;
+								and.Add (new ANDComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
+						case GridHandler.SpotType.AND_LEFT:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<SiblingsDir> ().Direction;
+								wires.Add (new WireComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
+						case GridHandler.SpotType.AND_RIGHT:
+							{
+								GridHandler.ComponentDirection dir = spot.GetComponent<SiblingsDir> ().Direction;
+								wires.Add (new WireComponent (new IVector3 (i, j, k), dir));
+								break;
+							}
 						}
 					}
 				}
@@ -141,7 +176,13 @@ public class GameHandler : MonoBehaviour {
 				case GridHandler.SpotType.EMPTY:
 					Debug.LogError ("Disconnected not gate at " + electronPos [index]);
 					break;
-				case GridHandler.SpotType.INPUT:
+				case GridHandler.SpotType.INPUT_A:
+					Debug.LogError ("Not cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_B:
+					Debug.LogError ("Not cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_C:
 					Debug.LogError ("Not cannot be connected to input wire");
 					break;
 				case GridHandler.SpotType.NOT:
@@ -162,6 +203,18 @@ public class GameHandler : MonoBehaviour {
 				case GridHandler.SpotType.OR_CENTRE:
 					PerformOrOperation (electronPos [index], index);
 					break;
+				case GridHandler.SpotType.AND_CENTRE:
+					PerformAndOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_RIGHT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.SPLITTER:
+					PerformSplitOperation (electronPos [index], index);
+					break;
 				}
 			}
 		}
@@ -181,7 +234,13 @@ public class GameHandler : MonoBehaviour {
 				case GridHandler.SpotType.EMPTY:
 					Debug.LogError ("Disconnected wire at " + electronPos [index]);
 					break;
-				case GridHandler.SpotType.INPUT:
+				case GridHandler.SpotType.INPUT_A:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_B:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_C:
 					Debug.LogError ("Wire cannot be connected to input wire");
 					break;
 				case GridHandler.SpotType.NOT:
@@ -201,6 +260,18 @@ public class GameHandler : MonoBehaviour {
 					break;
 				case GridHandler.SpotType.OR_CENTRE:
 					PerformOrOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_CENTRE:
+					PerformAndOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_RIGHT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.SPLITTER:
+					PerformSplitOperation (electronPos [index], index);
 					break;
 				}
 			}
@@ -231,7 +302,13 @@ public class GameHandler : MonoBehaviour {
 				case GridHandler.SpotType.EMPTY:
 					Debug.LogError ("Disconnected wire at " + electronPos [index]);
 					break;
-				case GridHandler.SpotType.INPUT:
+				case GridHandler.SpotType.INPUT_A:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_B:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_C:
 					Debug.LogError ("Wire cannot be connected to input wire");
 					break;
 				case GridHandler.SpotType.NOT:
@@ -255,12 +332,27 @@ public class GameHandler : MonoBehaviour {
 				case GridHandler.SpotType.SPLITTER:
 					PerformSplitOperation (electronPos [index], index);
 					break;
+				case GridHandler.SpotType.AND_CENTRE:
+					PerformAndOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_RIGHT:
+					PerformWireOperation (electronPos [index], index);
+					break;
 				}
 				switch (type2) {
 				case GridHandler.SpotType.EMPTY:
 					Debug.LogError ("Disconnected wire at " + electronPos [newIndex]);
 					break;
-				case GridHandler.SpotType.INPUT:
+				case GridHandler.SpotType.INPUT_A:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_B:
+					Debug.LogError ("Wire cannot be connected to input wire");
+					break;
+				case GridHandler.SpotType.INPUT_C:
 					Debug.LogError ("Wire cannot be connected to input wire");
 					break;
 				case GridHandler.SpotType.NOT:
@@ -283,6 +375,15 @@ public class GameHandler : MonoBehaviour {
 					break;
 				case GridHandler.SpotType.SPLITTER:
 					PerformSplitOperation (electronPos [newIndex], newIndex);
+					break;
+				case GridHandler.SpotType.AND_CENTRE:
+					PerformAndOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_LEFT:
+					PerformWireOperation (electronPos [index], index);
+					break;
+				case GridHandler.SpotType.AND_RIGHT:
+					PerformWireOperation (electronPos [index], index);
 					break;
 				}
 			}
@@ -318,7 +419,13 @@ public class GameHandler : MonoBehaviour {
 					case GridHandler.SpotType.EMPTY:
 						Debug.LogError ("Disconnected input wire at " + electronPos [index]);
 						break;
-					case GridHandler.SpotType.INPUT:
+					case GridHandler.SpotType.INPUT_A:
+						Debug.LogError ("Input wires cannot be connected to each other");
+						break;
+					case GridHandler.SpotType.INPUT_B:
+						Debug.LogError ("Input wires cannot be connected to each other");
+						break;
+					case GridHandler.SpotType.INPUT_C:
 						Debug.LogError ("Input wires cannot be connected to each other");
 						break;
 					case GridHandler.SpotType.NOT:
@@ -339,10 +446,87 @@ public class GameHandler : MonoBehaviour {
 					case GridHandler.SpotType.OR_CENTRE:
 						PerformOrOperation (electronPos [index], index);
 						break;
+					case GridHandler.SpotType.AND_CENTRE:
+						PerformAndOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.AND_LEFT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.AND_RIGHT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.SPLITTER:
+						PerformSplitOperation (electronPos [index], index);
+						break;
 					}
 
 				} else {
 					oc.Input.Add (_logicVals [index]);
+				}
+			}
+		}
+	}
+
+	private void PerformAndOperation (IVector3 pos, int index)
+	{
+		foreach (ANDComponent ac in and) {
+			if (ac.Position == pos) {
+				if (ac.Input.Count == 1) {
+					ac.Input.Add (_logicVals [index]);
+					bool _tempVal;
+					ac.Compute (out _tempVal);
+					_logicVals [index] = _tempVal;
+					//_logicVals.RemoveAt (index);
+					electronPos [index] = ac.MoveElectron ();
+					Debug.Log ("Electron moved through OR " + electronPos [index] + " with value =" + _tempVal);
+					GridHandler.SpotType type = _grid.GetComponentType (electronPos [index].x, electronPos [index].y, electronPos [index].z);
+					switch (type) {
+					case GridHandler.SpotType.EMPTY:
+						Debug.LogError ("Disconnected input wire at " + electronPos [index]);
+						break;
+					case GridHandler.SpotType.INPUT_A:
+						Debug.LogError ("Input wires cannot be connected to each other");
+						break;
+					case GridHandler.SpotType.INPUT_B:
+						Debug.LogError ("Input wires cannot be connected to each other");
+						break;
+					case GridHandler.SpotType.INPUT_C:
+						Debug.LogError ("Input wires cannot be connected to each other");
+						break;
+					case GridHandler.SpotType.NOT:
+						PerformNotOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.WIRE:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OUTPUT:
+						FinalOutput (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OR_LEFT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OR_RIGHT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.OR_CENTRE:
+						PerformOrOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.AND_CENTRE:
+						PerformAndOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.AND_LEFT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.AND_RIGHT:
+						PerformWireOperation (electronPos [index], index);
+						break;
+					case GridHandler.SpotType.SPLITTER:
+						PerformSplitOperation (electronPos [index], index);
+						break;
+					}
+
+				} else {
+					ac.Input.Add (_logicVals [index]);
 				}
 			}
 		}
@@ -362,7 +546,13 @@ public class GameHandler : MonoBehaviour {
 			case GridHandler.SpotType.EMPTY:
 				Debug.LogError ("Disconnected input wire at " + electronPos [i]);
 				break;
-			case GridHandler.SpotType.INPUT:
+			case GridHandler.SpotType.INPUT_A:
+				Debug.LogError ("Input wires cannot be connected to each other");
+				break;
+			case GridHandler.SpotType.INPUT_B:
+				Debug.LogError ("Input wires cannot be connected to each other");
+				break;
+			case GridHandler.SpotType.INPUT_C:
 				Debug.LogError ("Input wires cannot be connected to each other");
 				break;
 			case GridHandler.SpotType.NOT:
@@ -385,6 +575,15 @@ public class GameHandler : MonoBehaviour {
 				break;
 			case GridHandler.SpotType.SPLITTER:
 				PerformSplitOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.AND_LEFT:
+				PerformWireOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.AND_RIGHT:
+				PerformWireOperation (electronPos [i], i);
+				break;
+			case GridHandler.SpotType.AND_CENTRE:
+				PerformAndOperation (electronPos [i], i);
 				break;
 			}
 		}

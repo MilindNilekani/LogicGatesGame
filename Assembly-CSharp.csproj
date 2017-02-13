@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\ComponentMod\RotateOnClick.cs" />
      <Compile Include="Assets\Scripts\ComponentMod\SiblingsDir.cs" />
      <Compile Include="Assets\Scripts\ComponentMod\SplitterRotateOnClick.cs" />
+     <Compile Include="Assets\Scripts\Components\ANDComponent.cs" />
      <Compile Include="Assets\Scripts\Components\InputComponent.cs" />
      <Compile Include="Assets\Scripts\Components\NOTComponent.cs" />
      <Compile Include="Assets\Scripts\Components\ORComponent.cs" />
